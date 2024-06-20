@@ -3,10 +3,30 @@
 	# do something here
 #}
 
-## arg 1:  the new package version
-#post_install() {
-    # do something here
-#}
+# arg 1:  the new package version
+post_install() {
+	for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
+		config=/home/$user/.config
+		local=/home/$user/.local/share/kate
+		katepart=/home/$user/.local/share/kxmlgui5/katepart
+
+		#Backup Files
+		if [ ! -e "${config}/katerc-bkp" ]; then
+			mv "${config}/katerc" "${config}/katerc-bkp"
+		fi
+		if [ ! -e "${local}/anonymous.katesession-bkp" ]; then
+			mv "${config}/anonymous.katesession" "${config}/anonymous.katesession-bkp"
+		fi
+		if [ ! -e "${katepart}/katepart5ui.rc-bkp" ]; then
+			mv "${config}/katepart5ui.rc" "${config}/katepart5ui.rc-bkp"
+		fi
+
+		cp -f /etc/kate/katerc "${config}/katerc"
+		cp -f /etc/kate/anonymous.katesession "${local}/anonymous.katesession"
+		cp -f /etc/kate/katepart5ui.rc "${katepart}/katepart5ui.rc"
+	done
+
+}
 
 ## arg 2:  the old package version
 #pre_upgrade() {
@@ -14,9 +34,9 @@
 #}
 
 ## arg 2:  the old package version
-#post_upgrade() {
-	#post_install
-#}
+post_upgrade() {
+	post_install
+}
 
 ## arg 1:  the old package version
 #pre_remove() {
@@ -24,7 +44,14 @@
 #}
 
 ## arg 1:  the old package version
-#post_remove() {
-	# do something here
-#}
+post_remove() {
+		for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
+		config=/home/$user/.config
+		local=/home/$user/.local/share/kate
+		katepart=/home/$user/.local/share/kxmlgui5/katepart
+		cp -f "${config}/katerc-bkp" "${config}/katerc"
+		cp -f "${local}/anonymous.katesession-bkp" "${local}/anonymous.katesession"
+		cp -f "${katepart}/katepart5ui.rc-bkp" "${katepart}/katepart5ui.rc"
+	done
+}
  

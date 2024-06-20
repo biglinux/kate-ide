@@ -1,8 +1,8 @@
 # Maintainer: Barnabé di Kartola <barnabedikartola@gmail.com>
 
-pkgname=biglinux-package-template
-pkgdesc="Package template for biglinux"
-# depends=('')
+pkgname=kate-ide
+pkgdesc="turn Kate into an IDE"
+depends=('kate')
 # makedepends=('')
 # conflicts=('')
 pkgver=$(date +%y.%m.%d)
